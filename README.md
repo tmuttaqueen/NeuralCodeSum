@@ -8,7 +8,7 @@ You may consider installing the C2NL package. C2NL requires Linux and Python 3.6
 Run the following commands to clone the repository and install C2NL:
 
 ```
-git clone https://github.com/wasiahmad/NeuralCodeSum.git
+git clone https://github.com/tmuttaqueen/NeuralCodeSum
 cd NeuralCodeSum; pip install -r requirements.txt; python setup.py develop
 ```
 
