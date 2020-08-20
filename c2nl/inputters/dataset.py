@@ -11,21 +11,62 @@ from c2nl.inputters.vector import vectorize
 # ------------------------------------------------------------------------------
 
 
+# class CommentDataset(Dataset):
+#     def __init__(self, examples, model):
+#         self.model = model
+#         self.examples = examples
+
+#     def __len__(self):
+#         return len(self.examples)
+
+#     def __getitem__(self, index):
+#         return vectorize(self.examples[index], self.model)
+
+#     def lengths(self):
+#         return [(len(ex['code'].tokens), len(ex['summary'].tokens))
+#                 for ex in self.examples]
+
+###### larget dataset modification
+
+import _pickle as pkl
+
 class CommentDataset(Dataset):
-    def __init__(self, examples, model):
+    def __init__(self, examples, model, data_type = 'nottrain' ):
         self.model = model
-        self.examples = examples
+        self.lengths = [(len(ex['code'].tokens), len(ex['summary'].tokens)) for ex in examples]
+        self.data_type = data_type
+        self.dlength = len(examples)
+        self.split = 50
+        if self.data_type == 'train':
+            divided = [ [] for i in range(self.split) ] 
+            for i in range(self.dlength):
+                chunk = i%self.split
+                divided[chunk].append( examples[i] )
+            
+            for i in range(self.split):
+                with open('../../temp_data/train' + str(i) + '.pkl', 'wb') as file:
+                    file.write(pkl.dumps( divided[i] ))
+        else:
+            self.examples = examples
+       
+   
 
     def __len__(self):
-        return len(self.examples)
+        return self.dlength
 
     def __getitem__(self, index):
-        return vectorize(self.examples[index], self.model)
+        if self.data_type == 'train':
+            chunk = int(index%self.split)
+            ind = int(index/self.split)
+            with open('../../temp_data/train' + str(chunk) + '.pkl', 'rb') as file:
+                data = pkl.load(file) 
+                return vectorize(data[ind], self.model)
+        else:
+            return vectorize(self.examples[index], self.model)
+        
 
     def lengths(self):
-        return [(len(ex['code'].tokens), len(ex['summary'].tokens))
-                for ex in self.examples]
-
+        return self.lengths
 
 # ------------------------------------------------------------------------------
 # PyTorch sampler returning batched of sorted lengths (by doc and question).
