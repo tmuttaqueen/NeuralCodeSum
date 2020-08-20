@@ -33,7 +33,7 @@ import _pickle as pkl
 class CommentDataset(Dataset):
     def __init__(self, examples, model, data_type = 'nottrain' ):
         self.model = model
-        self.lengths = [(len(ex['code'].tokens), len(ex['summary'].tokens)) for ex in examples]
+        self.alllengths = [(len(ex['code'].tokens), len(ex['summary'].tokens)) for ex in examples]
         self.data_type = data_type
         self.dlength = len(examples)
         self.split = 50
@@ -66,7 +66,7 @@ class CommentDataset(Dataset):
         
 
     def lengths(self):
-        return self.lengths
+        return self.alllengths
 
 # ------------------------------------------------------------------------------
 # PyTorch sampler returning batched of sorted lengths (by doc and question).
