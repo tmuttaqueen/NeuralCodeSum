@@ -582,7 +582,7 @@ def main(args):
     logger.info('Make data loaders')
 
     if not args.only_test:
-        train_dataset = data.CommentDataset(train_exs, model)
+        train_dataset = data.CommentDataset(train_exs, model, data_type = 'train')
         if args.sort_by_len:
             train_sampler = data.SortedBatchSampler(train_dataset.lengths(),
                                                     args.batch_size,
